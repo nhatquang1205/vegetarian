@@ -47,8 +47,7 @@ namespace vegetarian.Extensions
                 options.AddPolicy("AllowSpecificOrigin",
                     builder =>
                     {
-                        builder
-                            .AllowAnyOrigin()
+                        builder.WithOrigins("http://localhost:3000")
                             .AllowAnyHeader()
                             .AllowAnyMethod()
                             .AllowCredentials(); // Cho phép client gửi cookie qua cross-origin

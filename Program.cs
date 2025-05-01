@@ -1,5 +1,4 @@
 using FastEndpoints;
-using FastEndpoints.Security;
 using FastEndpoints.Swagger;
 using vegetarian.Database.InitDb;
 using vegetarian.Extensions;
@@ -34,5 +33,6 @@ app
     // .UseAuthentication()
     // .UseAuthorization()
     .UseFastEndpoints()
+    .UseCors("AllowSpecificOrigin")
     .UseSwaggerGen();
 app.Run();
