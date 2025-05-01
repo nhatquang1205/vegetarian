@@ -1,0 +1,13 @@
+version: '3.4'
+services:
+  vegetarian.be:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "5147:80"
+      - "5148:443"
+    image: vegetarian.be
+    build:
+      context: .
+      dockerfile: Dockerfile
