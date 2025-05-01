@@ -1,11 +1,6 @@
 using System.Data.Common;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
-using Microsoft.IdentityModel.Tokens;
-
-using System.Reflection;
 using vegetarian.Database;
 
 namespace vegetarian.Extensions
