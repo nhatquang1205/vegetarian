@@ -36,7 +36,9 @@ namespace vegetarian.Features.Blogs.GetBlog
                 Status = category.Status,
                 Type = category.Type,
                 AuthorName = category.AuthorName,
-                AuthorId = category.AuthorId
+                AuthorId = category.AuthorId,
+                MaxUsers = category.MaxUsers,
+                CurrentUserCount = category.BlogsUsers.Count
             };
 
             await SendAsync(response, cancellation: ct);

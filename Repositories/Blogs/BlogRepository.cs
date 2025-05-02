@@ -26,7 +26,9 @@ namespace vegetarian.Repositories.Blogs
 
         public async Task<Blog?> GetBlogByIdAsync(int id)
         {
-            return await _context.Blogs.FindAsync(id);
+            return await _context.Blogs
+                .Include(x => x.BlogsUsers)
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<(int, IEnumerable<Blog>)> GetBlogsAsync(string? keyword, PaginationRequest paginationRequest)
@@ -40,7 +42,9 @@ namespace vegetarian.Repositories.Blogs
 
             var totalCount = await query.CountAsync();
 
-            query = query.OrderByDynamic(paginationRequest.OrderBy, paginationRequest.OrderDirection);
+            query = query
+                .Include(x => x.BlogsUsers)
+                .OrderByDynamic(paginationRequest.OrderBy, paginationRequest.OrderDirection);
 
             return (totalCount, await query
                 .Skip((paginationRequest.Page - 1) * paginationRequest.PageSize)

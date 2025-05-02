@@ -12,5 +12,7 @@ namespace vegetarian.Features.Blogs
         public BlogType Type { get; set; }
         public string AuthorName { get; set; } = string.Empty;
         public int? AuthorId { get; set;}
+        public int MaxUsers { get; set; }
+        public int CurrentUserCount { get; set; }
     }
 }

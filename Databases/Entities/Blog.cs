@@ -11,6 +11,7 @@ namespace vegetarian.Databases.Entities
         public BlogType Type { get; set; }
         public string AuthorName { get; set; } = string.Empty;
         public int? AuthorId { get; set;}
+        public int MaxUsers { get; set; }
 
         public virtual ICollection<BlogsUser> BlogsUsers { get; set; } = new HashSet<BlogsUser>();
         public virtual User Author { get; set; } = null!;

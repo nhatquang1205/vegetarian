@@ -14,6 +14,7 @@ namespace vegetarian.Features.Blogs.Save
         public BlogType Type { get; set; }
         public string AuthorName { get; set; } = string.Empty;
         public int? AuthorId { get; set;}
+        public int MaxUsers { get; set; }
     }
 
     public class Validator : Validator<Request>
