@@ -5,6 +5,7 @@ using vegetarian.Database.InitDb;
 using vegetarian.Extensions;
 using vegetarian.Repositories.Blogs;
 using vegetarian.Repositories.Categories;
+using vegetarian.Repositories.Products;
 
 var bld = WebApplication.CreateBuilder();
 
@@ -15,6 +16,7 @@ bld.Services.AddDataContext(bld.Configuration)
 bld.Services.AddScoped<IDbInitializer, DbInitializer>();
 bld.Services.AddScoped<IBlogRepository, BlogRepository>();
 bld.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+bld.Services.AddScoped<IProductRepository, ProductRepository>();
 
 bld.Services.AddSingleton(_ =>
     new MinioClient()

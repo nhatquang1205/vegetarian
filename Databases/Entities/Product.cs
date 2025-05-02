@@ -9,6 +9,7 @@ namespace vegetarian.Databases.Entities
         public required decimal Price { get; set; }
         public int? ParentId { get; set; }
         public ProductType Type { get; set; }
+        public bool IsPublished { get; set; }
 
         public virtual ICollection<ProductImage> Images { get; set; } = new HashSet<ProductImage>();
         public virtual ICollection<Product> Children { get; set; } = new HashSet<Product>();
