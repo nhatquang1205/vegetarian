@@ -28,7 +28,15 @@ namespace vegetarian.Features.Blogs.ArchiveBlog
             }
 
             // Archive the blog
-            blog.Status = BlogStatus.Archived;
+            if (blog.Status == BlogStatus.Archived)
+            {
+                blog.Status = BlogStatus.Published;
+            }
+            else
+            {
+                blog.Status = BlogStatus.Archived;
+            }
+
             await BlogRepository.UpdateBlogAsync(blog);
 
             var response = new Response
