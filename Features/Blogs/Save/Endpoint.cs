@@ -56,6 +56,7 @@ namespace vegetarian.Features.Blogs.Save
                     AuthorName = req.AuthorName,
                     AuthorId = req.AuthorId,
                     MaxUsers = req.MaxUsers,
+                    Type = req.Type,
                 };
                 req.Id = await BlogRepository.AddBlogAsync(newBlog);
             }
