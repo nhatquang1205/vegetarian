@@ -16,6 +16,7 @@ namespace vegetarian.Features.Products
         public decimal Price { get; set; }
         public ProductType Type { get; set; }
         public bool IsPublished { get; set; }
+        public bool IsCanDelete { get; set; }
         public List<int> CategoryIds { get; set; } = [];
         public List<int> ChildrenIds { get; set; } = [];
         public List<ImageResponse> Images { get; set; } = [];

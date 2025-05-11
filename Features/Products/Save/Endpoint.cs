@@ -41,21 +41,16 @@ namespace vegetarian.Features.Products.Save
                 product.Price = req.Price;
                 product.Type = req.Type;
                 product.IsPublished = req.IsPublished;
+                product.IsCanDelete = true;
 
                 if (req.DeletedChildren != null && req.DeletedChildren.Count > 0)
                 {
                     var deletedChildren = await ProductRepository.GetProductsByIds(req.DeletedChildren);
-                    foreach (var child in deletedChildren)
-                    {
-                        child.ParentId = null;
-                    }
+                    await ProductRepository.DeleteProductChildren(req.Id.Value, deletedChildren);
                 }
 
                 var addedChildren = await ProductRepository.GetProductsByIds(req.ChildrenIds);
-                foreach (var child in addedChildren)
-                {
-                    child.ParentId = product.Id;
-                }
+                await ProductRepository.AddProductChildren(req.Id.Value, addedChildren);
 
                 await ProductRepository.DeleteProductCategoriesAsync(product.Id);
                 product.Categories = [.. req.Categories.Select(x => new Databases.Entities.ProductCategory
@@ -90,6 +85,7 @@ namespace vegetarian.Features.Products.Save
                     Price = req.Price,
                     Type = req.Type,
                     IsPublished = req.IsPublished,
+                    IsCanDelete = true,
                     Categories = [.. req.Categories.Select(x => new Databases.Entities.ProductCategory
                     {
                         CategoryId = x
@@ -100,11 +96,7 @@ namespace vegetarian.Features.Products.Save
                     })]
                 };
                 req.Id = await ProductRepository.AddProductAsync(newProduct);
-                foreach (var child in children)
-                {
-                    child.ParentId = req.Id;
-                    await ProductRepository.UpdateProductAsync(child);
-                }
+                await ProductRepository.AddProductChildren(req.Id.Value, children);
             }
             await SendAsync(new Response
             {

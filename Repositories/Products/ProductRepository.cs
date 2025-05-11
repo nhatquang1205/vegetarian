@@ -5,16 +5,20 @@ using vegetarian.Commons.Schemas;
 using vegetarian.Database;
 using vegetarian.Databases.Entities;
 using vegetarian.Extensions;
+using static vegetarian.Commons.AppEnums;
 
 namespace vegetarian.Repositories.Products
 {
     public interface IProductRepository
     {
         Task<Product?> GetProductByIdAsync(int id);
-        Task<(int, IEnumerable<Product>)> GetProductsAsync(string? keyword, PaginationRequest paginationRequest);
+        Task<(int, IEnumerable<Product>)> GetProductsAsync(string? keyword, ProductType? type, PaginationRequest paginationRequest);
+        Task<(int, IEnumerable<Product>)> GetProductsForCreateAsync(string? keyword, ProductType? type, PaginationRequest paginationRequest);
         Task<int> AddProductAsync(Product product);
         Task UpdateProductAsync(Product product);
         Task DeleteProductAsync(int id);
+        Task DeleteProductChildren(int parentId, IEnumerable<Product> products);
+        Task AddProductChildren(int parentId, IEnumerable<Product> products);
         Task DeleteProductCategoriesAsync(int productId);
         Task<IEnumerable<Product>> GetProductsByIds(IEnumerable<int> ids);
         Task DeleteProductImagesAsync(IEnumerable<int> imageIds);
@@ -36,13 +40,42 @@ namespace vegetarian.Repositories.Products
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<(int, IEnumerable<Product>)> GetProductsAsync(string? keyword, PaginationRequest paginationRequest)
+        public async Task<(int, IEnumerable<Product>)> GetProductsAsync(string? keyword, ProductType? type, PaginationRequest paginationRequest)
         {
             var query = _context.Products.AsQueryable();
 
             if (!string.IsNullOrEmpty(keyword))
             {
                 query = query.Where(p => p.Name.Contains(keyword) || p.Description.Contains(keyword));
+            }
+
+            if (type.HasValue)
+            {
+                query = query.Where(p => p.Type == type);
+            }
+
+            var totalCount = await query.CountAsync();
+
+            query = query.OrderByDynamic(paginationRequest.OrderBy, paginationRequest.OrderDirection);
+
+            return (totalCount, await query
+                .Skip((paginationRequest.Page - 1) * paginationRequest.PageSize)
+                .Take(paginationRequest.PageSize)
+                .ToListAsync());
+        }
+
+        public async Task<(int, IEnumerable<Product>)> GetProductsForCreateAsync(string? keyword, ProductType? type, PaginationRequest paginationRequest)
+        {
+            var query = _context.Products.AsQueryable().Where(x => x.IsCanDelete == true && x.IsPublished == false);
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                query = query.Where(p => p.Name.Contains(keyword) || p.Description.Contains(keyword));
+            }
+
+            if (type.HasValue)
+            {
+                query = query.Where(p => p.Type == type);
             }
 
             var totalCount = await query.CountAsync();
@@ -78,12 +111,7 @@ namespace vegetarian.Repositories.Products
                 _context.ProductCategories.RemoveRange(product.Categories);
                 await DeleteProductImagesAsync(product.Images.Select(i => i.Id));
 
-                foreach (var child in product.Children)
-                {
-                    child.ParentId = null;
-                    _context.Products.Update(child);
-                }
-
+                _context.ProductChildren.RemoveRange(product.Children);
                 _context.Products.Remove(product);
                 await _context.SaveChangesAsync();
             }
@@ -179,6 +207,38 @@ namespace vegetarian.Repositories.Products
             }
 
             return _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteProductChildren(int parentId, IEnumerable<Product> products)
+        {
+            var productIds = products.Select(x => x.Id);
+            var deletedChildren = await _context.ProductChildren.Where(x => x.ParentId == parentId && productIds.Contains(x.ProductId)).ToListAsync();
+            if (deletedChildren != null && deletedChildren.Count != 0)
+            {
+                _context.ProductChildren.RemoveRange(deletedChildren);
+            }
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddProductChildren(int parentId, IEnumerable<Product> products)
+        {
+            var productIds = products.Select(x => x.Id);
+            
+            var addedProducts = new List<ProductChild>();
+            foreach (var id in productIds)
+            {
+                addedProducts.Add(new ProductChild
+                {
+                    ProductId = id,
+                    ParentId = parentId
+                });
+            }
+
+            if (addedProducts.Count != 0)
+            {
+                await _context.ProductChildren.AddRangeAsync(addedProducts);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

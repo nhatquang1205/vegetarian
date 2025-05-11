@@ -1,7 +1,7 @@
 using vegetarian.Commons.Schemas;
 using static vegetarian.Commons.AppEnums;
 
-namespace vegetarian.Features.Products.GetProducts
+namespace vegetarian.Features.Products.GetProductsForCreate
 {
     public class Request : PaginationRequest
     {

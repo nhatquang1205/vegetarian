@@ -32,6 +32,19 @@ namespace vegetarian.Databases
             .HasForeignKey(pi => pi.ProductId)
             .OnDelete(DeleteBehavior.NoAction);
         
+        modelBuilder.Entity<Product>()
+            .HasMany(p => p.Children)
+            .WithOne(pc => pc.Parent)
+            .HasForeignKey(pc => pc.ParentId)
+            .OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<Product>()
+            .HasMany(p => p.Parents)
+            .WithOne(pp => pp.Product)
+            .HasForeignKey(pp => pp.ProductId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        
         modelBuilder.Entity<ProductCategory>()
             .HasKey(pc => new { pc.ProductId, pc.CategoryId });
         

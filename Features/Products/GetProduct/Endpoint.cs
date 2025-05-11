@@ -36,7 +36,7 @@ namespace vegetarian.Features.Products.GetProduct
                 Type = product.Type,
                 IsPublished = product.IsPublished,
                 CategoryIds = [.. product.Categories.Select(c => c.CategoryId)],
-                ChildrenIds = [.. product.Children.Select(c => c.Id)],
+                ChildrenIds = [.. product.Children.Select(c => c.ProductId)],
                 Images = [.. product.Images.Select(i => new ImageResponse
                 {
                     Id = i.Id,

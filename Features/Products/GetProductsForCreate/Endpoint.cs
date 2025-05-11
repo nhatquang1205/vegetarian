@@ -2,17 +2,17 @@ using vegetarian.Commons.Schemas;
 using vegetarian.Repositories.Products;
 using FastEndpoints;
 
-namespace vegetarian.Features.Products.GetProducts
+namespace vegetarian.Features.Products.GetProductsForCreate
 {
     public class Endpoint : Endpoint<Request, PaginationResponse<ProductResponse>>
     {
         public IProductRepository ProductRepository { get; set; } = null!;
         public override void Configure()
         {
-            Get("/products");
+            Get("/products-for-create");
             AllowAnonymous();
             Description(x => x
-                .WithName("Get Products")
+                .WithName("Get Products For Create")
                 .Produces<PaginationResponse<ProductResponse>>(200)
                 .Produces(400)
                 .Produces(500));
@@ -22,7 +22,7 @@ namespace vegetarian.Features.Products.GetProducts
         {
         
             // Get the products
-            var (total, products) = await ProductRepository.GetProductsAsync(req.Keyword, req.Type, req);
+            var (total, products) = await ProductRepository.GetProductsForCreateAsync(req.Keyword, req.Type, req);
 
             // Return the response
             await SendAsync(new PaginationResponse<ProductResponse>

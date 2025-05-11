@@ -14,6 +14,7 @@ namespace vegetarian.Database.InitDb
         {
             await _context.Database.EnsureCreatedAsync();
             await SeedDataDefault();
+            await SeedDataProducts();
         }
     }
 }
