@@ -24,6 +24,8 @@ namespace vegetarian.Repositories.Products
         Task DeleteProductImagesAsync(IEnumerable<int> imageIds);
         Task AddProductImagesAsync(IEnumerable<ProductImage> images);
         Task SaveChangesAsync();
+        Task<IEnumerable<Category>> GetDrinks();
+        Task<IEnumerable<Product>> GetLunchMenu();
     }
 
     public class ProductRepository(DataContext context, IMinioClient minio) : IProductRepository
@@ -239,6 +241,23 @@ namespace vegetarian.Repositories.Products
                 await _context.ProductChildren.AddRangeAsync(addedProducts);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<IEnumerable<Category>> GetDrinks()
+        {
+            var categories = _context.Categories.AsQueryable()
+                .Include(c => c.Products)
+                .ThenInclude(pc => pc.Product);
+            return await categories.Where(c => c.Products.Count != 0).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Product>> GetLunchMenu()
+        {
+            return await _context.Products
+                .Include(x => x.Children)
+                .ThenInclude(c => c.Product)
+                .Where(x => x.Type == ProductType.Food && x.IsPublished == true)
+                .ToListAsync();
         }
     }
 }

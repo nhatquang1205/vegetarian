@@ -320,7 +320,7 @@ namespace vegetarian.Database.InitDb
                         [
                             new()
                             {
-                                Category = category1
+                                Category = category2
                             }
                         ]
                     },

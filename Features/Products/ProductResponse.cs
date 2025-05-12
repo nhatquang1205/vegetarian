@@ -8,6 +8,14 @@ namespace vegetarian.Features.Products
         public string ImageUrl { get; set; } = string.Empty;
     }
 
+    public class CategoryResponse
+    {
+        public int Id { get; set; } = default!;
+        public string Name { get; set; } = default!;
+        public string Description { get; set; } = default!;
+        public List<ProductResponse> Products { get; set; } = [];
+    }
+
     public class ProductResponse
     {
         public int Id { get; set; }
@@ -20,5 +28,6 @@ namespace vegetarian.Features.Products
         public List<int> CategoryIds { get; set; } = [];
         public List<int> ChildrenIds { get; set; } = [];
         public List<ImageResponse> Images { get; set; } = [];
+        public List<ProductResponse> Children { get; set; } = []; 
     }
 }
